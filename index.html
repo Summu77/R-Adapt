@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>R-Adapt | Robust Vision-Language Models</title>
+    <meta
+      name="description"
+      content="R-Adapt improves adversarial robustness in vision-language models with minimal shallow-layer adaptation while preserving clean accuracy."
+    />
+    <meta name="theme-color" content="#11233d" />
+    <meta property="og:title" content="R-Adapt" />
+    <meta
+      property="og:description"
+      content="Towards reconciling robustness and accuracy in vision-language models."
+    />
+    <meta property="og:image" content="static/images/main.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Sora:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="static/css/index.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <div class="container header-inner">
+          <a class="brand" href="#top">R-Adapt</a>
+          <nav class="nav-links" aria-label="Primary">
+            <a href="#abstract">Abstract</a>
+            <a href="#insights">Insights</a>
+            <a href="#method">Method</a>
+            <a href="#results">Results</a>
+            <a href="#citation">Citation</a>
+          </nav>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero-section" id="top">
+          <div class="container hero-grid">
+            <div class="hero-copy reveal">
+              <p class="eyebrow">Project Page • Vision-Language Model Robustness</p>
+              <h1>
+                What Makes VLMs Robust?
+                <span>Towards Reconciling Robustness and Accuracy in Vision-Language Models</span>
+              </h1>
+              <p class="lead">
+               
+              </p>
+
+              <div class="authors">
+                <a href="https://summu77.github.io" target="_blank" rel="noreferrer">Sen Nie<sup>1,2</sup></a>
+                <a href="https://jiezhang010.github.io" target="_blank" rel="noreferrer">Jie Zhang<sup>1,2</sup></a>
+                <a href="https://robin-wzq.github.io" target="_blank" rel="noreferrer">Zhongqi Wang<sup>1,2</sup></a>
+                <span>Zhaoyang Wei<sup>2</sup></span>
+                <a href="https://scholar.google.com/citations?user=Vkzd7MIAAAAJ&amp;hl=zh-CN" target="_blank" rel="noreferrer">Shiguang Shan<sup>1,2</sup></a>
+                <a href="https://scholar.google.com/citations?user=vVx2v20AAAAJ&amp;hl=zh-CN&amp;oi=ao" target="_blank" rel="noreferrer">Xilin Chen<sup>1,2</sup></a>
+              </div>
+
+              <div class="affiliations">
+                <p><sup>1</sup>State Key Laboratory of AI Safety, Institute of Computing Technology, Chinese Academy of Sciences</p>
+                <p><sup>2</sup>University of Chinese Academy of Sciences</p>
+              </div>
+
+              <div class="action-row">
+                <a class="button primary" href="https://github.com/Summu77/R-Adapt" target="_blank" rel="noreferrer">Code</a>
+                <a class="button" href="static/files/r-adapt.bib">BibTeX</a>
+                <a class="button" href="#method">Method</a>
+                <a class="button" href="#results">Results</a>
+                <span class="button ghost" aria-disabled="true">PDF Coming Soon</span>
+              </div>
+            </div>
+
+            <div class="hero-panel reveal">
+              <div class="hero-stats">
+                <article class="stat-card">
+                  <strong>+10.8%</strong>
+                  <span>higher clean accuracy than FARE on 16-dataset average</span>
+                </article>
+                <article class="stat-card">
+                  <strong>+4.4%</strong>
+                  <span>higher AutoAttack (4/255) robustness than FARE on 16-dataset average</span>
+                </article>
+                <article class="stat-card">
+                  <strong>640× fewer</strong>
+                  <span>training images than standard adversarial fine-tuning</span>
+                </article>
+                <article class="stat-card">
+                  <strong>Extensive applicability</strong>
+                  <span>classification, retrieval, VQA, and captioning tasks</span>
+                </article>
+              </div>
+
+              <figure class="hero-figure figure-frame">
+                <img src="static/images/main.png" alt="Overview of the R-Adapt framework and average clean/robust performance." />
+                <figcaption>
+                   R-Adapt shows that adversarial robustness in VLMs is largely established in the
+                earliest layers. By freezing the pre-trained backbone and adapting only the input
+                filter and first attention block, it achieves a much stronger robustness-accuracy
+                trade-off than standard adversarial fine-tuning.
+                </figcaption>
+              </figure>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="abstract">
+          <div class="container narrow reveal">
+            <div class="section-heading">
+              <p class="section-tag">Abstract</p>
+              <h3><span class="title-accent">R-Adapt</span>: Adversarial <span class="title-accent">R</span>obustness <span class="title-accent">Adapt</span>ation</h3>
+            </div>
+            <p class="section-copy">
+              Achieving adversarial robustness in Vision-Language Models (VLMs) inevitably compromises accuracy on clean data, presenting a long-standing and challenging trade-off. In this work, we revisit this trade-off by investigating a fundamental question: What makes VLMs robust? Through a detailed analysis of adversarially fine-tuned models, we examine how robustness mechanisms function internally and how they interact with clean accuracy. Our analysis reveals that <b> adversarial robustness is not uniformly distributed across network depth </b>. Instead, unexpectedly, it is primarily localized within the shallow layers, driven by a low-frequency spectral bias and input-insensitive attention patterns. Meanwhile, updates to the deep layers tend to undermine both clean accuracy and robust generalization. 
+              <br /><br />
+              Motivated by these insights, we propose Adversarial Robustness Adaptation (R-Adapt), a simple yet effective framework that freezes all pre-trained weights and introduces minimal, insight-driven adaptations only in the initial layers. This design achieves an exceptional balance between adversarial robustness and clean accuracy. R-Adapt further supports <b>training-free, model-guided, and data-driven</b> paradigms, offering flexible pathways to seamlessly equip standard models with robustness. Extensive evaluations on 18 datasets and diverse tasks demonstrate our state-of-the-art performance under various attacks. Notably, R-Adapt generalizes efficiently to large vision-language models (e.g., LLaVA and Qwen-VL) to enhance their robustness.
+            </p>
+          </div>
+        </section>
+
+        <section class="section alt" id="insights">
+          <div class="container">
+            <div class="section-heading reveal">
+              <p class="section-tag">Insights</p>
+              <h2>Why shallow layers matter</h2>
+              <p class="section-copy">
+                Layer-wise analysis shows that adversarial robustness emerges early, while deeper
+                updates often hurt both clean accuracy and robust generalization.
+              </p>
+            </div>
+
+            <div class="insight-grid">
+              <article class="text-card reveal">
+                <h3>Shallow layers are the primary source of robustness</h3>
+                <p>
+                  Centered Kernel Alignment and progressive replacement experiments show that most
+                  robustness gains are already established after the embedding layer and the first
+                  attention block. Replacing deeper blocks adds little robustness while increasing
+                  the risk of semantic overfitting.
+                </p>
+                <!-- <ul class="bullet-list">
+                  <li>Robustness nearly saturates after Embedding + Block1 Attention.</li>
+                  <li>Deep-layer updates degrade clean transfer across downstream datasets.</li>
+                  <li>The robust model functionally postpones standard low-level feature extraction.</li>
+                </ul> -->
+              </article>
+
+              <figure class="figure-frame reveal">
+                <img src="static/images/insight1.png" alt="Layer-wise CKA analysis and progressive replacement results." loading="lazy" />
+                <!-- <figcaption>
+                  CKA analysis and progressive replacement both point to early-layer dominance.
+                </figcaption> -->
+              </figure>
+
+              <article class="text-card reveal">
+                <h3>Two-stage robustness pattern in shallow layers</h3>
+                <p>
+                  Robust models first suppress high-frequency perturbations in the embedding layer,
+                  then redirect first-block attention away from fragile low-level primitives toward a
+                  stable, input-insensitive response. R-Adapt explicitly recreates these two effects.
+                </p>
+                <!-- <ul class="bullet-list">
+                  <li>Low-frequency spectral bias acts like a conservative denoising gate.</li>
+                  <li>First-block attention becomes closer to a universal robustness anchor.</li>
+                  <li>Stable structural cues survive, while brittle textures matter less.</li>
+                </ul> -->
+              </article>
+
+              <figure class="figure-frame reveal">
+                <img src="static/images/insight2.png" alt="Spectral shift and attention pattern visualizations." loading="lazy" />
+                <!-- <figcaption>
+                  Robustness combines low-pass filtering and input-insensitive attention.
+                </figcaption> -->
+              </figure>
+
+              <article class="text-card reveal">
+                <h3>Updates to deeper layers hurt generalization</h3>
+                <p>
+                  Progressive replacement shows that once robustness has already been established in
+                  the shallow layers, continuing to update deeper blocks becomes harmful.
+                  Deeper updates often hurt both clean accuracy and robust
+                  generalization, especially when the model is transferred beyond the
+                  source distribution used for adversarial fine-tuning.
+                </p>
+                <!-- <ul class="bullet-list">
+                  <li>Most robustness gains arrive early, before deeper semantic blocks are replaced.</li>
+                  <li>Further deep-layer substitution reduces clean accuracy even on the source domain.</li>
+                  <li>On unseen datasets, it also weakens robust transfer, revealing semantic overfitting.</li>
+                </ul> -->
+              </article>
+
+              <figure class="figure-frame reveal">
+                <img src="static/images/insight3.png" alt="Progressive replacement trends showing the robustness-accuracy trade-off and overfitting." loading="lazy" />
+                <figcaption>
+                  Once replacement is applied to deeper layers, clean accuracy and robust
+                  generalization both begin to drop in the out-of-distribution setting.
+                </figcaption>
+              </figure>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="method">
+          <div class="container">
+            <div class="section-heading reveal">
+              <p class="section-tag">Method</p>
+              <h2>Minimal adaptation, frozen backbone</h2>
+              <p class="section-copy">
+                R-Adapt keeps the original CLIP backbone intact and intervenes only where the
+                analysis says robustness lives: the embedding layer and the first
+                attention block.
+              </p>
+            </div>
+
+            <div class="method-grid">
+              <figure class="figure-frame reveal">
+                <img src="static/images/anchor.png" alt="Three robustness anchor acquisition paradigms." loading="lazy" />
+                <figcaption>
+                  R-Adapt supports training-free, model-guided, and data-driven anchor acquisition.
+                </figcaption>
+              </figure>
+
+              <div class="method-copy">
+                <article class="text-card reveal">
+                  <h3>Gaussian Input Filter</h3>
+                  <p>
+                    A lightweight Gaussian low-pass filter attenuates the high-frequency components
+                    typically exploited by adversarial perturbations before they enter the visual
+                    encoder.
+                  </p>
+                </article>
+
+                <article class="text-card reveal">
+                  <h3>Fixed Robustness Anchor</h3>
+                  <p>
+                    The first attention block is replaced with a linear combination of the original
+                    response and a fixed robustness anchor. This stabilizes the most fragile stage of
+                    the network without changing any deeper weights.
+                  </p>
+                </article>
+              </div>
+            </div>
+
+            <div class="paradigm-grid method-paradigms">
+              <article class="mini-card reveal">
+                <p class="mini-tag">Training-Free</p>
+                <h4>R-Adapt<sub>CLIP</sub></h4>
+                <p>Extract the anchor from a standard CLIP using a uniform white image. No training, no external robust model.</p>
+              </article>
+              <article class="mini-card reveal">
+                <p class="mini-tag">Model-Guided</p>
+                <h4>R-Adapt<sub>M</sub></h4>
+                <p>Borrow the robust prior from an adversarially fine-tuned model (M), then run inference with a frozen clean backbone.</p>
+              </article>
+              <article class="mini-card reveal">
+                <p class="mini-tag">Data-Driven</p>
+                <h4>R-Adapt<sup>+</sup></h4>
+                <p>Optimize only the anchor on 2k adversarial samples, then transfer the learned anchor across tasks and datasets.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="section alt" id="results">
+          <div class="container">
+            <div class="section-heading reveal">
+              <p class="section-tag">Results</p>
+              <h2>Strong robustness without collapsing clean performance</h2>
+              <p class="section-copy">
+                R-Adapt<sup>+</sup> improves the trade-off across classification, retrieval, and multimodal
+                generation (Captioning and VQA), while remaining much more data-efficient than standard adversarial
+                fine-tuning.
+              </p>
+            </div>
+
+            <div class="result-highlight-grid">
+              <article class="result-card reveal">
+                <p class="metric">67.0%</p>
+                <h3>Average clean accuracy</h3>
+                <p>
+                  R-Adapt<sup>+</sup> reaches the best 16-dataset average clean accuracy among robust
+                  methods (TeCoA, TGA, FARE) while remaining close to standard CLIP.
+                </p>
+              </article>
+              <article class="result-card reveal">
+                <p class="metric">57.2%</p>
+                <h3>Average robustness</h3>
+                <p>
+                  R-Adapt<sup>+</sup> sets the strongest robustness average 16 datasets at
+                  <code>&epsilon; = 4/255</code> under AutoAttack, outperforming FARE by 4.4 points.
+                </p>
+              </article>
+              <article class="result-card reveal">
+                <p class="metric">83.6 / 79.7</p>
+                <h3>Retrieval R@1</h3>
+                <p>
+                  On Flickr30k image-to-text retrieval, R-Adapt<sup>+</sup> preserves clean
+                  alignment and improves robust R@1 under attack.
+                </p>
+              </article>
+              <article class="result-card reveal">
+                <p class="metric">85.3 / 79.4</p>
+                <h3>CAP / VQA robustness</h3>
+                <p>
+                  The same design extends to larger LVLMs and restores robust captioning and VQA
+                  under strong visual attacks.
+                </p>
+              </article>
+            </div>
+
+            <div class="table-card reveal">
+              <div class="table-header">
+                <h3>Average classification trade-off on 16 datasets</h3>
+                <p>R-Adapt reaches stronger clean-robust balance than standard adversarial fine-tuning baselines.</p>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Method</th>
+                      <th>Training Budget</th>
+                      <th>Clean Avg.</th>
+                      <th>Robust Avg.</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>CLIP</td>
+                      <td>None</td>
+                      <td>69.8</td>
+                      <td>0.0</td>
+                    </tr>
+                    <tr>
+                      <td>TeCoA</td>
+                      <td>1.28M images</td>
+                      <td>49.6</td>
+                      <td>48.2</td>
+                    </tr>
+                    <tr>
+                      <td>TGA</td>
+                      <td>1.28M images</td>
+                      <td>56.3</td>
+                      <td>50.2</td>
+                    </tr>
+                    <tr>
+                      <td>FARE</td>
+                      <td>1.28M images</td>
+                      <td>56.2</td>
+                      <td>52.8</td>
+                    </tr>
+  
+                    <tr>
+                      <td>R-Adapt<sub>CLIP</sub> (ours)</td>
+                      <td>0 images (training-free)</td>
+                      <td>66.2</td>
+                      <td>48.4</td>
+                    </tr>
+                    <tr>
+                      <td>R-Adapt<sub>FARE</sub> (ours)</td>
+                      <td>0 images (model-guided)</td>
+                      <td>64.5</td>
+                      <td>55.6</td>
+                    </tr>
+                    <tr class="highlight-row">
+                      <td>R-Adapt<sup>+</sup> (ours)</td>
+                      <td>2k images (data-driven)</td>
+                      <td>67.0 (↑10.8)</td>
+                      <td>57.2 (↑4.4)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="gallery-grid">
+              <figure class="figure-frame reveal">
+                <img src="static/images/results.png" alt="Ablation figure for the R-Adapt components." loading="lazy" />
+                <figcaption>
+                  <h3>Against Diverse Attacks</h3>
+                  R-Adapt preserves cross-modal retrieval (image->text) quality and improves robustness under PGD,
+                  C&amp;W, APGD-CE, DLR, FAB, and Square attacks, indicating that the effect is not
+                  tied to a single attack family.
+                </figcaption>
+              </figure>
+              <figure class="figure-frame reveal">
+                <img src="static/images/llava.png" alt="Visualization examples for LLaVA captioning and VQA under attack." loading="lazy" />
+                <figcaption>
+                  <!-- R-Adapt also extends to larger LVLMs for robust captioning and VQA. -->
+                <h3>Transfer to larger LVLMs</h3>
+                <p>
+                  On LLaVA, robust captioning climbs from 21.3% to 85.3% and robust VQA from 22.6%
+                  to 79.4%. Appendix results further show that Qwen3-VL also benefits strongly from
+                  the same shallow-layer adaptation strategy.
+                </p>
+                <div class="caption-inline-media">
+                  <img src="static/images/ablation-1.png" alt="Ablation table showing the complementary effects of GIF and FRA." loading="lazy" />
+                  <p>
+                    <b>GIF and FRA are complementary</b>. The strongest robustness appears when both are used
+                    together.
+                  </p>
+                </div>
+                </figcaption>
+              </figure>
+            </div>
+
+            <!-- <div class="result-notes">
+              <article class="text-card reveal">
+                <h3>Beyond classification</h3>
+                <p>
+                 
+                </p>
+              </article>
+              <article class="text-card reveal">
+                <h3>Transfer to larger LVLMs</h3>
+                <p>
+                  On LLaVA, robust captioning climbs from 21.3% to 85.3% and robust VQA from 22.6%
+                  to 79.4%. Appendix results further show that Qwen3-VL also benefits strongly from
+                  the same shallow-layer adaptation strategy.
+                </p>
+              </article>
+            </div> -->
+          </div>
+        </section>
+
+        <section class="section" id="citation">
+          <div class="container citation-grid">
+            <div class="section-heading reveal">
+              <p class="section-tag">Citation</p>
+              <h2>BibTeX</h2>
+              <p class="section-copy">
+                Use the entry below to cite the project page or copy the file directly.
+              </p>
+            </div>
+
+            <div class="citation-card reveal">
+              <button class="copy-button" type="button" data-copy-bibtex>Copy BibTeX</button>
+              <pre id="bibtex-block"><code>@misc{
+                coming soon
+}</code></pre>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <div class="container footer-inner">
+          <p><a href="https://github.com/Summu77/R-Adapt" target="_blank" rel="noreferrer">GitHub Repository</a></p>
+        </div>
+      </footer>
+    </div>
+
+    <script src="static/js/index.js"></script>
+  </body>
+</html>
